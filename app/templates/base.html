@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/main.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<style>
+    p input {
+        width: 100%;
+    }
+</style>
+<body style="background-color: #2e3338; color:black">
+    <!-- hidden -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+        <div class="offcanvas-header">
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Главная</a>
+                </li>
+                {% if request.user.is_authenticated %}
+                <li><hr class="dropdown-divider"></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'my_videos' %}">Ваши видео</a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'see_later_list' %}">Смотреть позже</a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'liked' %}">Понравившиеся</a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'create_video' %}">Создать видео</a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-dark bg-dark mb-3">
+        <div class="container-fluid">
+            <!-- nav -->
+            <div style="display: flex; justify-content: flex-start; align-items: center;">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a href="/">
+                    <img src="/static/logo.svg" class="float-start" style="height: 50px; width: auto; margin-left: 15px;">
+                </a>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <form class="d-flex" action="{% if category %}{% url 'search_by_category' category %}{% else %}{% url 'search' %}{% endif %}">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="width: 500px;" name="q">
+                    <button class="btn btn-outline-light" type="submit">Search</button>
+                </form>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-outline-light me-3"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a>
+                    <a href="{% url 'my_profile' %}"><img src="{{ request.user.image.url }}" class="rounded-circle d-block" style="height: 50px; width: 50px;"></a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-outline-light"><i class="fa-solid fa-circle-user me-2"></i>Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+</body>
+</html>

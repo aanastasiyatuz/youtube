@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ video.title }}{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-around;">
+    <div style="background-color: #2e3338;">
+        <div class="card" style="width: 50vw; background-color: #485057;">
+            <video id="my-video" style="width: 50vw; height: 70vh; background-color: black;" controls preload="auto" width="1000" height="800" data-setup="{}" controlsList="nodownload">
+                <source src="{% url 'stream' video.id %}" type="video/mp4"/>
+                <source src="{% url 'stream' video.id %}" type="video/webm"/>
+            </video>
+            <div class="card-body">
+                <h3>{{ video.title }}</h3>
+                <div style="display: flex; justify-content:space-between; margin:20px 0px;align-items: center;">
+                    <a href="{% url 'profile' video.user.email %}"><img src="{{ video.user.image.url }}" class="rounded-circle d-block" style="height: 50px; width: 50px;"></a>
+                    <div style="display: flex; justify-content: flex-end;width: 50%;">
+                        <p>{{ video.user.followers.all.count }} followers</p>
+                        {% if request.user.is_authenticated %}
+                            {% if not request.user == video.user %}
+                            <a href="{% url 'follow_create' video.user.email %}" style="margin-left: 10px;"><button class="btn btn-outline-light">{% if is_followed %}Unfollow{% else %}Follow{% endif %}</button></a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <p class="card-text">{{ video.description }}</p>
+                {% if request.user.is_authenticated %}<a href="{% url 'like_post' video.id %}" style="text-decoration: none; color:black">{% endif %}
+                    <p class="card-text"><i class="{% if is_liked_post %}fa-solid{% else %}fa-thin{% endif %} fa-thumbs-up"></i> {{ likes }} {{ video.views }} views</p></a>
+                {% if is_user %}<a href="{% url 'update_video' video.id %}"><button class="btn btn-outline-light">Update</button></a>{% endif %}
+                {% if request.user.is_authenticated %}{% if see_later %}<a href="{% url 'see_later' video.id %}"><button class="btn btn-outline-light">See later</button></a>{% endif %}{% endif %}
+            </div>
+        </div>
+        <div style="background-color: #2e3338;width: 50vw;" class="mt-5" >
+            {% if request.user.is_authenticated %}
+                <form method="post" action="{% url 'create_comment' video.id %}" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    {% csrf_token %}
+                    {{comment_form}}
+                    <button class="btn btn-outline-light btn-lg" type="submit">Add comment</button>
+                </form>
+            {% endif %}
+            <div style="background-color: #485057; border-radius: 0.25rem;">
+                {% for c in comments %}
+                    <div style="margin: 5px; padding: 0px 5px; background-color: #545e66;border-radius: 0.25rem;">
+                        <h5>{{ c.0.user }}</h5>
+                        <p>{{ c.0.body }}</p>
+                        {% if request.user.is_authenticated %}<a href="{% url 'like_comment' video.id c.0.id %}" style="text-decoration: none; color:black">{% endif %}
+                            <p class="card-text"><i class="{% if c.1 %}fa-solid{% else %}fa-thin{% endif %} fa-thumbs-up"></i> {{ c.2 }}</p></a>
+                        {% if c.0.sub_comments %}
+                            {% for sub in c.0.sub_comments.all %}
+                            <div style="background-color: aqua;">
+                                {{ sub.user }}
+                                {{ sub.body }}
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; flex-direction: column; background-color: #2e3338;">
+        {% for v in videos %}
+            <a href="{% url 'see' v.id %}" style="text-decoration: none; color:black">
+                <div class="card mb-3" style="max-width: 540px; background-color: #485057;">
+                    <div class="row g-0">
+                        <div class="col-md-6">
+                            <img src="{{ v.image.url }}" class="img-fluid rounded-start" style="height: 130px;">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ v.title }}</h5>
+                                <p class="card-text">{{ v.description|slice:":15" }}...</p>
+                                <p class="card-text"><small class="text-muted">{{ v.views }}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    #id_body{
+        height:50px;
+        width: 500px;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0.25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+
+</style>
+{% endblock %}

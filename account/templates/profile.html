@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.email }}{% endblock %}
+
+{% block content %}
+    <div class="">
+        <div style="display: flex;align-items: center;justify-content: space-evenly;" class="mb-5">
+            <img src="{{ user.image.url }}" style="width: 20vw;height: auto;border-radius: 50%;">
+            <div style="display: flex;align-items: flex-start;flex-direction: column;">
+                <h2>{{ user.email }}</h2>
+                <a href="{% url 'see_follow' user.email %}">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 15vw;">
+                        <p>{{ follow }} follow</p>
+                        <p>{{ followers }} followers</p>
+                    </div>
+                </a>
+                {% if request.user.is_authenticated %}
+                    {% if not request.user == user %}
+                        <a href="{% url 'follow_create' user.email %}"><button class="btn btn-outline-light">{% if is_followed %}Unfollow{% else %}Follow{% endif %}</button></a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <div style="width: 90vw;display:flex;flex-wrap: wrap; justify-content: space-between;">
+                {% for v in videos %}
+                <a href="{% url 'see' v.id %}" style="text-decoration: none; color:black">
+                    <div class="card mb-3" style="width: 400px; background-color: #485057;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="{{ v.image.url }}" class="img-fluid rounded-start" style="height: 130px;">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ v.title }}</h5>
+                                    <p class="card-text">{{ v.description|slice:":15" }}...</p>
+                                    <p class="card-text"><small class="text-muted">{{ v.views }}</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

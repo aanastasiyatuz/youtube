@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Videos{% endblock %}
+
+{% block content %}
+<div style="display: flex; align-items: center;width: 98vw;flex-direction: column;">
+    <div style="display: flex; background-color: #2e3338; flex-wrap: wrap; width: 85vw; justify-content: flex-start; align-content: flex-start;">
+        {% for cat in categories %}
+        <a href="{% url 'search_by_category' cat.title %}"><button class="btn btn-outline-secondary me-3">{{ cat.title }}</button></a>
+        {% endfor %}
+    </div>
+    <div style="display: flex;">
+        {% if users %}
+            <div class="card-deck mt-4" style="display: flex; background-color: #2e3338; flex-wrap: wrap; width: 15vw;min-height: 80vh; justify-content: space-between; align-content: flex-start;">
+                <h5>Users</h5>
+                {% for u in users %}
+                    <a href="{% url 'profile' u.email %}" style="text-decoration: none; color:black">
+                        <div class="card mb-3" style="background-color: #485057;width: 180px;" >
+                            <img src="{{ u.image.url }}" class="card-img-top">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ u.email }}</h6>
+                                <p class="card-text" style="display: inline;">{{ u.follows.all.count }} followers</p>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="card-deck mt-4" style="display: flex; background-color: #2e3338; flex-wrap: wrap; width: {% if users %}70{% else %}85{% endif %}vw;min-height: 80vh; justify-content: space-between; align-content: flex-start;">
+            <h5 style="width:100%">Videos</h5>
+            {% for v in videos %}
+                <a href="{% url 'see' v.id %}" style="text-decoration: none; color:black">
+                    <div class="card mb-3" style="width: 270px; background-color: #485057;">
+                        <img src="{{ v.image.url }}" class="card-img-top" style="height: 130px;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ v.title|slice:":30" }}...</h5>
+                            <p class="card-text" style="display: inline;">{{ v.description|slice:":15" }}...</p>
+                            <p class="card-text" style="display: inline;"><small class="text-muted"> {{ v.views }} views</small></p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

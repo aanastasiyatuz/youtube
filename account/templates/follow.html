@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Followers{% endblock %}
+
+{% block content %}
+<div style="display: flex; align-items: center;width: 98vw;flex-direction: column;">
+    <div style="display: flex;">
+        <div class="card-deck mt-4"style="display: flex;flex-direction: column; background-color: #2e3338;  width: 47vw;min-height: 80vh; justify-content: flex-start; align-content: flex-start;flex-wrap: wrap;">
+            <h5>Follow</h5>
+            {% for u in follow %}
+                <a href="{% url 'profile' u.follow.email %}" style="text-decoration: none; color:black">
+                    <div class="card mb-3" style="width: 150%; background-color: #485057;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="{{ u.follow.image.url }}" class="img-fluid rounded-start" style="height: 130px;">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ u.follow.email }}</h5>
+                                    <p class="card-text">{{ u.follow.followers.all.count }} followers</p>
+                                    {% if request.user == u.follow %}
+                                    <p>(me)</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        <div class="card-deck mt-4"style="display: flex;flex-direction: column; background-color: #2e3338;  width: 47vw;min-height: 80vh; justify-content: flex-start; align-content: flex-start;flex-wrap: wrap;">
+            <h5>Followers</h5>
+            {% for u in followers %}
+                <a href="{% url 'profile' u.user.email %}" style="text-decoration: none; color:black">
+                    <div class="card mb-3" style="width: 150%; background-color: #485057;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="{{ u.user.image.url }}" class="img-fluid rounded-start" style="height: 130px;">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ u.user.email }}</h5>
+                                    <p class="card-text">{{ u.user.followers.all.count }} followers</p>
+                                    {% if request.user == u.user %}
+                                        <p>(me)</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

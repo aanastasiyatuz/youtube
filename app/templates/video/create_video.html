@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Create{% endblock %}
+
+{% block content %}
+    <div style="display: flex; align-items: center; justify-content: space-evenly;flex-direction: column; height: 80vh; margin-top: 70px;">
+        <form method="post" style="display: flex; flex-direction: column;" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+{% endblock %}
